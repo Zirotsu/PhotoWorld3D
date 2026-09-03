@@ -6,7 +6,6 @@ $Venv = Join-Path $Engine '.venv-hq360'
 $VendorRoot = Join-Path $Engine 'vendor'
 $Vendor = Join-Path $VendorRoot 'InstantMesh'
 $Requirements = Join-Path $Engine 'hq360-requirements.txt'
-$TorchExtensions = Join-Path $Engine '.torch_extensions_hq360'
 
 Write-Host '=== PhotoWorld 3D | Instalador 360 Alta Fidelidad ===' -ForegroundColor Cyan
 Write-Host 'Este entorno es independiente de SF3D y del motor principal.' -ForegroundColor DarkGray
@@ -39,7 +38,6 @@ if (-not $VsDev) {
 }
 
 New-Item -ItemType Directory -Force -Path $VendorRoot | Out-Null
-New-Item -ItemType Directory -Force -Path $TorchExtensions | Out-Null
 
 if (-not (Test-Path $Venv)) {
   Write-Host '[1/9] Creando entorno Python 3.11...' -ForegroundColor Yellow
@@ -84,18 +82,17 @@ if (-not (Test-Path (Join-Path $Vendor 'run.py'))) {
 }
 
 Write-Host '[7/9] Instalando nvdiffrast con MSVC + CUDA...' -ForegroundColor Yellow
-$InstallCmd = "call `"$VsDev`" -arch=x64 && set `"DISTUTILS_USE_SDK=1`" && set `"MSSdk=1`" && set `"CUDA_HOME=$Cuda`" && set `"CUDA_PATH=$Cuda`" && set `"TORCH_CUDA_ARCH_LIST=12.0`" && set `"TORCH_EXTENSIONS_DIR=$TorchExtensions`" && `"$Py`" -m pip install --no-build-isolation --no-cache-dir git+https://github.com/NVlabs/nvdiffrast/"
+$InstallCmd = "call `"$VsDev`" -arch=x64 && set `"DISTUTILS_USE_SDK=1`" && set `"MSSdk=1`" && set `"CUDA_HOME=$Cuda`" && set `"CUDA_PATH=$Cuda`" && set `"TORCH_CUDA_ARCH_LIST=12.0`" && `"$Py`" -m pip install --no-build-isolation --no-cache-dir git+https://github.com/NVlabs/nvdiffrast/"
 & cmd.exe /d /s /c $InstallCmd
 if ($LASTEXITCODE -ne 0) { throw 'Fallo la instalacion de nvdiffrast.' }
 
 Write-Host '[8/9] Precompilando extension CUDA para la RTX 5060 Ti...' -ForegroundColor Yellow
 $WarmupPy = "import torch; import nvdiffrast.torch as dr; print('Torch',torch.__version__); print('CUDA',torch.cuda.is_available()); print('GPU',torch.cuda.get_device_name(0)); print('CAP',torch.cuda.get_device_capability(0)); ctx=dr.RasterizeCudaContext(); print('nvdiffrast CUDA OK')"
-$WarmupCmd = "call `"$VsDev`" -arch=x64 && set `"DISTUTILS_USE_SDK=1`" && set `"MSSdk=1`" && set `"CUDA_HOME=$Cuda`" && set `"CUDA_PATH=$Cuda`" && set `"TORCH_CUDA_ARCH_LIST=12.0`" && set `"TORCH_EXTENSIONS_DIR=$TorchExtensions`" && `"$Py`" -c `"$WarmupPy`""
+$WarmupCmd = "call `"$VsDev`" -arch=x64 && set `"DISTUTILS_USE_SDK=1`" && set `"MSSdk=1`" && set `"CUDA_HOME=$Cuda`" && set `"CUDA_PATH=$Cuda`" && set `"TORCH_CUDA_ARCH_LIST=12.0`" && `"$Py`" -c `"$WarmupPy`""
 & cmd.exe /d /s /c $WarmupCmd
 if ($LASTEXITCODE -ne 0) { throw 'Fallo la precompilacion CUDA de nvdiffrast.' }
 
 Write-Host '[9/9] Verificando entorno HQ360...' -ForegroundColor Yellow
-$env:TORCH_EXTENSIONS_DIR = $TorchExtensions
 $env:CUDA_HOME = $Cuda
 & $Py -c "import torch, diffusers, transformers, rembg, trimesh, cv2, xatlas, nvdiffrast.torch; print('Torch', torch.__version__); print('CUDA', torch.cuda.is_available()); print('GPU', torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU'); print('HF Hub', __import__('huggingface_hub').__version__); print('HQ360 imports OK')"
 if ($LASTEXITCODE -ne 0) {

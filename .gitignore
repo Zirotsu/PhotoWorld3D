@@ -1,8 +1,15 @@
-﻿node_modules/
+node_modules/
 dist/
 engine/.venv/
 engine/.venv-sf3d/
+engine/.venv-hq360/
+engine/.venv-humanhd/
 engine/vendor/stable-fast-3d/
+engine/vendor/InstantMesh/
+engine/vendor/SiTH/
+engine/outputs/
+engine/inputs/
+engine/models/
 __pycache__/
 *.pyc
 .cache/

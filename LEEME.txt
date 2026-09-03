@@ -1,0 +1,16 @@
+PhotoWorld 3D v0.2 - Sujeto 360
+
+1) Cierra PhotoWorld y la consola npm run dev.
+2) Copia TODO el contenido de este parche dentro de tu carpeta PhotoWorld3D y acepta reemplazar archivos.
+   NO borres engine\.venv ni node_modules.
+3) Abre CMD en la carpeta PhotoWorld3D.
+4) Instala el motor 360:
+   powershell -NoProfile -ExecutionPolicy Bypass -File ".\scripts\install-sf3d.ps1"
+5) Stable Fast 3D requiere acceso al modelo de Hugging Face. Acepta/solicita acceso al modelo
+   stabilityai/stable-fast-3d y luego inicia sesión cuando el instalador te lo indique.
+6) Diagnóstico:
+   powershell -NoProfile -ExecutionPolicy Bypass -File ".\scripts\doctor-360.ps1"
+7) Inicia:
+   npm run dev
+
+PhotoWorld AI usa el puerto 18787. OmniManager 8790 NO se toca.

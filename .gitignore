@@ -1,0 +1,12 @@
+﻿node_modules/
+dist/
+engine/.venv/
+engine/.venv-sf3d/
+engine/vendor/stable-fast-3d/
+__pycache__/
+*.pyc
+.cache/
+outputs/
+models/
+.env
+.env.*

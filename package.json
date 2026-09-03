@@ -1,0 +1,39 @@
+{
+  "name": "photoworld3d",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local GPU-powered photo-to-interactive-3D desktop app",
+  "main": "electron/main.cjs",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -n VITE,ELECTRON \"vite --host 127.0.0.1\" \"wait-on tcp:5173 && electron .\"",
+    "build": "vite build",
+    "start": "electron .",
+    "dist": "npm run build && electron-builder --win"
+  },
+  "dependencies": {
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "electron": "^38.1.2",
+    "electron-builder": "^26.0.12",
+    "vite": "^7.1.7",
+    "wait-on": "^8.0.4"
+  },
+  "build": {
+    "appId": "com.helixfix.photoworld3d",
+    "productName": "PhotoWorld 3D",
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      { "from": "engine", "to": "engine" }
+    ],
+    "win": {
+      "target": "nsis"
+    }
+  }
+}
